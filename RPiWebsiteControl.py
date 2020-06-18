@@ -4,11 +4,14 @@ from __future__ import division
 from datetime import datetime
 import serial
 import re
+import os
+
 
 #ser= serial.Serial('/dev/ttyUSBx',9600)
 
-#readin template data
+outfile = "/var/www/html/index.html"
 
+#readin template data
 template = '/home/pi/Desktop/Programs_and_Scripts/RPiWebsiteControl/lib/html/controlInterface.html'
 with open(template,'r') as f:
 	templateData = f.read()
@@ -21,7 +24,7 @@ def refresh_data(templateData,inputDict):
 
 def populateData():
 	#replacements = {}
-	replacements = {'{light_mode}':'on','{temp_avg}': 1 ,'{temp_stdev}': 2,'{pwm_usec}': 3}
+	replacements = {'{light_mode}':'On','{sens1}':75.2,'{sens2}':80.4,'{sens3}':79.2,'{temp_avg}': 79.45,'{temp_stdev}': 0.84,'{pwm_usec}': 25}
 	
 
 	#get time and date
@@ -34,10 +37,28 @@ def populateData():
 
 	return replacements
 
+def removePrevHtml():
+	if os.path.exists(outfile):
+        	os.remove(outfile)
+	else:
+        	print("The original outfile /var/www/html/index.html does not exist")
+
 def main():
+	# get your data from input stream
 	replacements = populateData()
+	
+	# replace it in the template
 	refreshed_template = refresh_data(templateData,replacements)
 	print(refreshed_template)
+	
+	# remove old 
+	removePrevHtml()	
+	
+	# write new file to this position
+	with open(outfile,'w+') as outFile:
+		outFile.write(refreshed_template)
+		
+
 	#while 1:
         	#print "stuff"
         	#if(ser.in_waiting > 0):
