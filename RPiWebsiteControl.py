@@ -24,7 +24,7 @@ def refresh_data(templateData,inputDict):
 
 def populateData():
 	#replacements = {}
-	replacements = {'{light_mode}':'On','{sens1}':75.2,'{sens2}':80.4,'{sens3}':79.2,'{temp_avg}': 79.45,'{temp_stdev}': 0.84,'{pwm_usec}': 25}
+	replacements = {'{light_mode}':'On','{sens1}':75.2,'{sens2}':81.4,'{sens3}':71.2,'{temp_avg}': 79.6,'{temp_stdev}': 0.89,'{pwm_usec}': 32}
 	
 
 	#get time and date
@@ -49,7 +49,7 @@ def main():
 	
 	# replace it in the template
 	refreshed_template = refresh_data(templateData,replacements)
-	print(refreshed_template)
+	#print(refreshed_template)
 	
 	# remove old 
 	removePrevHtml()	
