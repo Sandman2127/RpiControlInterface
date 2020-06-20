@@ -5,9 +5,9 @@ from datetime import datetime
 import serial
 import re
 import os
+import time
 
-
-#ser= serial.Serial('/dev/ttyUSBx',9600)
+ser= serial.Serial('/dev/ttyACM0',9600)
 
 outfile = "/var/www/html/index.html"
 
@@ -23,19 +23,22 @@ def refresh_data(templateData,inputDict):
 	return templateData
 
 def populateData():
-	#replacements = {}
-	replacements = {'{light_mode}':'On','{sens1}':75.2,'{sens2}':81.4,'{sens3}':71.2,'{temp_avg}': 79.6,'{temp_stdev}': 0.89,'{pwm_usec}': 32}
+	replacements = {}
+	#replacements = {'{light_mode}':'On','{sens1}':75.2,'{sens2}':81.4,'{sens3}':71.2,'{temp_avg}': 79.6,'{temp_stdev}': 0.89,'{pwm_usec}': 32}
 	
-
 	#get time and date
 	now = datetime.now()
 	dateandtime = now.strftime("%d/%m/%Y %H:%M:%S")
 	replacements.update({'{last_reading}':dateandtime})	
-	
-	#parse input string to get other values
-	
-
-	return replacements
+		
+	inputList = []
+	while ser.in_waiting > 0 :
+		line = ser.readline()
+		inputList.append(line)
+	for thing in inputList:
+		print thing
+	return 0
+	#return replacements
 
 def removePrevHtml():
 	if os.path.exists(outfile):
@@ -44,28 +47,24 @@ def removePrevHtml():
         	print("The original outfile /var/www/html/index.html does not exist")
 
 def main():
+	# initiate main loop:
+	
 	# get your data from input stream
 	replacements = populateData()
 	
 	# replace it in the template
-	refreshed_template = refresh_data(templateData,replacements)
-	#print(refreshed_template)
+	#refreshed_template = refresh_data(templateData,replacements)
 	
 	# remove old 
-	removePrevHtml()	
+	#removePrevHtml()	
 	
 	# write new file to this position
-	with open(outfile,'w+') as outFile:
-		outFile.write(refreshed_template)
-		
-
-	#while 1:
-        	#print "stuff"
-        	#if(ser.in_waiting > 0):
-        	#       line = ser.readline()
-        	#       print(line)	
+	#with open(outfile,'w+') as outFile:
+	#	outFile.write(refreshed_template)
 
 if __name__ == "__main__":
-	main()
+	while 1:
+		main()
+		time.sleep(120)
 
 
