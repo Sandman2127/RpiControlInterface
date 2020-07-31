@@ -78,7 +78,9 @@ def main():
 
 if __name__ == "__main__":
 	while 1:
-		main()
-		time.sleep(120)
-
+		if ser.in_waiting > 0 :
+			main()
+			time.sleep(10)
+		else:
+			time.sleep(10)
 
